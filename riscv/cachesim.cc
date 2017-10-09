@@ -1,10 +1,12 @@
 // See LICENSE for license details.
 
 #include "cachesim.h"
+#include "sim.h"
 #include "common.h"
 #include <cstdlib>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <fstream>
 
 cache_sim_t::cache_sim_t(size_t _sets, size_t _ways, size_t _linesz, const char* _name)
  : sets(_sets), ways(_ways), linesz(_linesz), name(_name)
@@ -132,6 +134,11 @@ void cache_sim_t::access(uint64_t addr, size_t bytes, bool store)
     if (store)
       *hit_way |= DIRTY;
     return;
+  }
+
+  if (!miss_handler) {
+    if (miss_logger)
+      (*miss_logger) << processor->get_state()->minstret << "," << addr << "," << store << std::endl;
   }
 
   store ? write_misses++ : read_misses++;

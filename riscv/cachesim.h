@@ -4,10 +4,13 @@
 #define _RISCV_CACHE_SIM_H
 
 #include "memtracer.h"
+#include "processor.h"
 #include <cstring>
 #include <string>
 #include <map>
 #include <cstdint>
+#include <fstream>
+using namespace std;
 
 class lfsr_t
 {
@@ -29,6 +32,8 @@ class cache_sim_t
   void access(uint64_t addr, size_t bytes, bool store);
   void print_stats();
   void set_miss_handler(cache_sim_t* mh) { miss_handler = mh; }
+  void set_miss_logger(ofstream* f) { miss_logger = f; }
+  void set_processor(processor_t* p) {processor = p; }
 
   static cache_sim_t* construct(const char* config, const char* name);
 
@@ -41,6 +46,8 @@ class cache_sim_t
 
   lfsr_t lfsr;
   cache_sim_t* miss_handler;
+  ofstream* miss_logger;
+  processor_t* processor;
 
   size_t sets;
   size_t ways;
